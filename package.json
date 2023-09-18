@@ -1,0 +1,26 @@
+{
+  "name": "visual-editor-1",
+  "productName": "visual-editor-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "StepMatt",
+  "license": "ISC",
+  "dependencies": {
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "electron": "^26.2.1",
+    "electron-builder": "^24.6.4",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "com.StepMatt.VisualEditor1"
+  }
+}

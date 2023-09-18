@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Спасите</title>
+</head>
+
+<body>
+    <input id="input" type="file">
+    <div style="height: 82vh; overflow-y: scroll;">
+        <canvas id="canvas" width="500" height="3000"></canvas>
+    </div>
+    <div>
+        <label>Сдвиг битов</label>
+        <input id="offset" type="number" value=0>
+        <fieldset display="inline">
+            <legend>Позиция курсора</legend>
+            <label>X: </label>
+            <input id="x" disabled>
+            <label>Y: </label>
+            <input id="y" disabled>
+            <label>Яркость: </label>
+            <input id="brightness" disabled>
+        </fieldset>
+    </div>
+		
+		<script src="./render.js"></script>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        input.onchange = async () => {
+            const fileDataBuffer = await input.files[0].arrayBuffer();
+            const pictureParams = new Uint16Array(fileDataBuffer, 0, 2);
+            const pictureData = new Uint16Array(fileDataBuffer, 4);
+            console.log(pictureParams);
+            console.log(pictureData);
+            const bit_offset = offset.value;
+            for (let i = 0; i < pictureData.length; i++) {
+                pictureData[i] = (pictureData[i] >> bit_offset) & parseInt("0000000011111111", 2);
+            }
+            console.log(pictureData);
+            const imageData = ctx.createImageData(500, 3000);
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                const picDataIndex = parseInt(i / 4);
+                imageData.data[i + 0] = pictureData[picDataIndex]; // R value
+                imageData.data[i + 1] = pictureData[picDataIndex]; // G value
+                imageData.data[i + 2] = pictureData[picDataIndex]; // B value
+                imageData.data[i + 3] = 255; // A value
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        const xField = document.getElementById("x");
+        const yField = document.getElementById("y");
+        const brightness = document.getElementById("brightness");
+
+        function pickCoordinates(event, destX, destY, destBrightness) {
+            const bounding = canvas.getBoundingClientRect();
+            const x = event.clientX - bounding.left;
+            const y = event.clientY - bounding.top - 0.5;
+            const colorData = ctx.getImageData(x, y, 1, 1).data;
+            destX.value = x;
+            destY.value = y;
+            destBrightness.value = colorData[0];
+            return x, y, brightness;
+        }
+
+        canvas.addEventListener("mousemove", (event) => pickCoordinates(event, xField, yField, brightness));
+    </script>
+</body>
+
+</html>
