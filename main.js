@@ -27,11 +27,19 @@ function getCursorInfo(event, bounding) {
 
 	// Записываем значения x и y для опеделени позиции курсора на экране с учетом скролла и размера окна
   const x = ((event.clientX - bounding.left) * (pictureParams[0] / scroller.clientWidth)).toFixed(0);
-  const y = ((event.clientY - bounding.top - 0.5 + scroller.scrollTop) * (pictureParams[1] / (scroller.scrollHeight - scroller.clientHeight))).toFixed(0);;
+  const y = Math.round((event.clientY - bounding.top - 0.5 + scroller.scrollTop) * (3000 / (scroller.scrollHeight - scroller.clientHeight)));
   
 	cursor.x.value = x
   cursor.y.value = y
-  cursor.brightness.value = ctx.getImageData(x, y, 1, 1).data[0];
+
+	let brightness = parseInt(
+    state.editedData[y * pictureParams[1] + (pictureParams[0] - x)]
+      .toString(2) 
+      .padStart(16, "0") 
+      .substring(8 - state.shift, 16 - state.shift), // Избавляемся от незначащих цифр с учётом сдвига
+  )
+
+	cursor.brightness.value = brightness
 }
 
 // Функция для обработки изменения сдвига
@@ -80,7 +88,7 @@ function modifyPictureData() {
   const { editedData, pictureData, shift } = state;
 
   for (let i = 0; i < pictureData.length; i++) {
-    editedData[i] = (pictureData[i] >> shift) & parseInt("0000001111111111", 2);
+    editedData[i] = (pictureData[i] >> shift) & 255;
   }
 }
 
@@ -97,16 +105,15 @@ function createImageData(width, height) {
 }
 
 // Функция для заполнения объекта ImageData
-function populateImageData() {
-  const { imageData, editedData } = state;
-  for (let i = 0; i < state.imageData.data.length; i += 4) {
-    const picDataIndex = parseInt(i / 4);
-    imageData.data[i + 0] = editedData[picDataIndex]; // Значение красного цвета
-    imageData.data[i + 1] = editedData[picDataIndex]; // Значение зеленого цвета
-    imageData.data[i + 2] = editedData[picDataIndex]; // Значение синего цвета
-    imageData.data[i + 3] = 255; // Значение альфа-канала
-  }
-}
+function populateImageData() { 
+  const { imageData, editedData } = state; 
+
+  for (let i = 0; i < state.imageData.data.length; i += 4) { 
+    const picDataIndex = parseInt(i / 4); 
+    const colorValue = editedData[picDataIndex]; 
+    imageData.data.set([colorValue, colorValue, colorValue, 255], i); 
+  } 
+} 
 
 // Функция для отображения объекта ImageData на холсте
 function displayImageData() {

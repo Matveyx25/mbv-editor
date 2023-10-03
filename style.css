@@ -36,9 +36,6 @@ body{
   width: 100vw;
 	overflow: auto;
 }
-.canvas-wrapper canvas{
-	width: 100%;
-}
 .file-input-wrapper{
 	display: flex;
 	gap: 16px;
