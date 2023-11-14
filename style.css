@@ -26,9 +26,16 @@ body{
 }
 
 .zoom-wrapper canvas{
-	width: 125px;
-	height: 125px;
+	width: 200px;
+	height: 200px;
 	border: 1px solid #000;
+}
+
+.overview-canvas{
+	position: absolute;
+	right: 200px;
+	top: 0;
+	width: 150px;
 }
 
 .control-block__title{

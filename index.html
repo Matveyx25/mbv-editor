@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Лабораторная 1. Программное обеспечение обработки визуальных данных</title>
+    <title>Лабораторная 2. Программное обеспечение обработки визуальных данных</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
 		<link rel="stylesheet" href="./style.css">
 </head>
@@ -19,14 +19,15 @@
 		</div>
 		<div class="canvas-wrapper">
 			<canvas data-image-canvas></canvas>
+			<div class="overview-canvas" style="height: 750px;"></div>
 			<form id="zoom-form" class="zoom-wrapper">
 				<canvas data-zoom-canvas></canvas>
 				<label>
-					<input type="checkbox" name="normalize-bright" value="true">
+					<input type="checkbox" name="normalize" value="true" checked>
 					<span>Нормировать яркость</span>
 				</label>
 				<label>
-					<input type="checkbox" name="interpolation" value="true">
+					<input type="checkbox" name="interpolation" value="true" checked>
 					<span>Интерпалировать</span>
 				</label>
 			</form>
