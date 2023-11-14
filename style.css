@@ -13,6 +13,24 @@ body{
 	flex-grow: 1;
 }
 
+.zoom-wrapper{
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 8px;
+	border: 1px solid #eee;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: #fff;
+}
+
+.zoom-wrapper canvas{
+	width: 125px;
+	height: 125px;
+	border: 1px solid #000;
+}
+
 .control-block__title{
 	font-size: 16px;
 	margin: 0;

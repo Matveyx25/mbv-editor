@@ -19,6 +19,17 @@
 		</div>
 		<div class="canvas-wrapper">
 			<canvas data-image-canvas></canvas>
+			<form id="zoom-form" class="zoom-wrapper">
+				<canvas data-zoom-canvas></canvas>
+				<label>
+					<input type="checkbox" name="normalize-bright" value="true">
+					<span>Нормировать яркость</span>
+				</label>
+				<label>
+					<input type="checkbox" name="interpolation" value="true">
+					<span>Интерпалировать</span>
+				</label>
+			</form>
 		</div>
 		<div class="flex-row">
 			<div class="control-block">

@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
+    "win": "electron-builder build --win",
     "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
