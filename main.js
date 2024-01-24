@@ -181,10 +181,10 @@ function populateImageData(imageData, data) {
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
       const colorValue = data[i][j];
-      imageData.data[dataIndex + 0] = colorValue; // R value
-      imageData.data[dataIndex + 1] = colorValue; // G value
-      imageData.data[dataIndex + 2] = colorValue; // B value
-      imageData.data[dataIndex + 3] = 255; // A value
+      imageData.data[dataIndex + 0] = colorValue; 
+      imageData.data[dataIndex + 1] = colorValue; 
+      imageData.data[dataIndex + 2] = colorValue; 
+      imageData.data[dataIndex + 3] = 255; 
       dataIndex += 4;
     }
   }
@@ -224,41 +224,67 @@ function bilinearInterpolation(left, top, size, zoomCoefficient, data) {
 	if (top + size > data.length) size = data.length - top;
   const interpolationUnitSize = 2 * zoomCoefficient - 1;
   const zoomedSize = interpolationEnabled ? (interpolationUnitSize - 1) * (size - 1) + 1 : size;
-  const zoomedData = [];
-  for (let j = 0; j < zoomedSize; j++) {
-    zoomedData.push([]);
-  }
+  let zoomedData = []
 	
 	if(interpolationEnabled){
-		let rowIndex = 0;
-		for (let i = top; i < top + size - 1; i++) {
-			let columnIndex = 0;
-			for (let j = left; j < left + size - 1; j++) {
-				const tl = data[i][j]; 
-				const tr = data[i][j + 1];
-				const bl = data[i + 1][j];
-				const br = data[i + 1][j + 1];
-				for (let n = rowIndex; n < rowIndex + interpolationUnitSize; n++) {
-					const y = (n - rowIndex) / (interpolationUnitSize - 1);
-					for (let m = columnIndex; m < columnIndex + interpolationUnitSize; m++) {
-						const x = (m - columnIndex) / (interpolationUnitSize - 1);
-						const brightness = tl * (1 - x) * (1 - y) + tr * x * (1 - y) + bl * (1 - x) * y + br * x * y;
-						zoomedData[n][m] = Math.round(brightness);
-					}
-				}
-				columnIndex += interpolationUnitSize - 1;
-			}
-			rowIndex += interpolationUnitSize - 1;
-		}
+		zoomedData = interpolation(data, top, size, left, interpolationUnitSize, zoomedSize)
 	}else{
-		for (let i = top; i < top + size; i++) {
-			for (let j = left; j < left + size; j++) {
-				zoomedData[i - top][j - left] = data[i][j];
-			}
-		}
+		debugger
+		zoomedData = noInterpolation(data, top, size, left, interpolationUnitSize, zoomedSize)
 	}
 
   return { zoomedData, zoomedSize };
+}
+
+function interpolation(data, top, size, left, interpolationUnitSize, zoomedSize) {
+	let zoomedData = []
+	let rowIndex = 0;
+	for (let j = 0; j < zoomedSize; j++) {
+    zoomedData.push([]);
+  }
+
+	for (let i = top; i < top + size - 1; i++) {
+		let columnIndex = 0;
+		for (let j = left; j < left + size - 1; j++) {
+			const tl = [...data][i][j]; 
+			const tr = [...data][i][j + 1];
+			const bl = [...data][i + 1][j];
+			const br = [...data][i + 1][j + 1];
+			for (let n = rowIndex; n < rowIndex + interpolationUnitSize; n++) {
+				const y = (n - rowIndex) / (interpolationUnitSize - 1);
+				for (let m = columnIndex; m < columnIndex + interpolationUnitSize; m++) {
+					const x = (m - columnIndex) / (interpolationUnitSize - 1);
+					const brightness = tl * (1 - x) * (1 - y) + tr * x * (1 - y) + bl * (1 - x) * y + br * x * y;
+					zoomedData[n][m] = Math.round(brightness);
+				}
+			}
+			columnIndex += interpolationUnitSize - 1;
+		}
+		rowIndex += interpolationUnitSize - 1;
+	}
+
+	return zoomedData
+}
+
+function noInterpolation(data, top, size, left,interpolationUnitSize, zoomedSize) {
+	let zoomedData = []
+
+	for (let j = 0; j < zoomedSize; j++) {
+    zoomedData.push([]);
+  }
+	let rowIndex = 0
+	for (let i = top; i < top + size - 1; i++) {
+		let columnIndex = 0;
+		for (let j = left; j < left + size - 1; j++) {
+			for (let n = 0; n < 200; n++) {
+					zoomedData[n][m] = data[i][j];
+			}
+			columnIndex += interpolationUnitSize - 1;
+		}
+		rowIndex += interpolationUnitSize - 1;
+	}
+
+	return zoomedData
 }
  
 function normalizeColor(data) {
